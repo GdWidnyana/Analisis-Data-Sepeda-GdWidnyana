@@ -6,132 +6,73 @@ from babel.numbers import format_currency
 import plotly.express as px
 import plotly.graph_objects as go
 
-sns.set(style='dark')
-
 # Helper function yang dibutuhkan untuk menyiapkan berbagai dataframe
 def create_daily_rent_df(df):
     daily_rent_df = df.groupby(by='date').agg({
        "count": "sum"
     }).reset_index()
     return daily_rent_df
-   
-def create_daily_casual_rent_df(df):
-    daily_casual_rent_df = df.groupby(by='date').agg({
-       "casual": "sum"
-    }).reset_index()
-    return daily_casual_rent_df
 
-def create_daily_registered_rent_df(df):
-   daily_registered_rent_df = df.groupby(by='date').agg({
-       "registered": "sum"
-    }).reset_index()
-   return daily_registered_rent_df
-
-def create_season_rent_df(df):
-    season_rent_df = df.groupby(by='season')[['registered', 'casual']].sum().reset_index()
-    return season_rent_df
-
-def create_monthly_rent_df(df):
-    monthly_rent_df = df.groupby(by='month').agg({
-        'count': 'sum'
-    })
-    ordered_months = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ]
-    monthly_rent_df = monthly_rent_df.reindex(ordered_months, fill_value=0)
-    return monthly_rent_df
-
-def create_yearly_rent_df(df):
-    yearly_rent_df = df.groupby(by='year').agg({
-        'count': 'sum'
-    })
-    ordered_year = ['2011', '2012']
-    yearly_rent_df = yearly_rent_df.reindex(ordered_year, fill_value=0)
-    return yearly_rent_df
-    
-def create_weekday_rent_df(df):
-    weekday_rent_df = df.groupby(by='weekday').agg({
-        'count': 'sum'
-    }).reset_index()
-    return weekday_rent_df
-    
-def create_workingday_rent_df(df):
-    workingday_rent_df = df.groupby(by='workingday').agg({
-        'count': 'sum'
-    }).reset_index()
-    return workingday_rent_df
-
-def create_holiday_rent_df(df):
-    holiday_rent_df = df.groupby(by='holiday').agg({
-        'count': 'sum'
-    }).reset_index()
-    return holiday_rent_df
-
-def create_weather_rent_df(df):
-    weather_rent_df = df.groupby(by='weather').agg({
-        'count': 'sum'
-    })
-    return weather_rent_df
-        
 # Load cleaned data
-url = "https://github.com/GdWidnyana/Analisis-Data-Sepeda-GdWidnyana/blob/main/dashboard/clean_day.xlsx"
+url = "https://raw.githubusercontent.com/GdWidnyana/Analisis-Data-Sepeda-GdWidnyana/main/dashboard/clean_day.xlsx"
 
 try:
-    all_df = pd.read_excel(url)
+    all_df = pd.read_excel(url, engine='openpyxl')
 except pd.errors.ParserError as e:
     print(f"Error parsing Excel: {e}")
 except Exception as e:
     print(f"Error: {e}")
 
-# Konversi kolom 'date' menjadi tipe datetime
-all_df['date'] = pd.to_datetime(all_df['date'])
+# Pastikan 'all_df' terdefinisi
+if all_df is not None:
+    # Konversi kolom 'date' menjadi tipe datetime
+    if 'date' in all_df.columns:
+        all_df['date'] = pd.to_datetime(all_df['date'])
+    else:
+        st.error("Kolom 'date' tidak ditemukan dalam dataset")
 
-# Filter data
-min_date = all_df['date'].dt.date.min()
-max_date = all_df['date'].dt.date.max()
+    # Filter data
+    min_date = all_df['date'].dt.date.min()
+    max_date = all_df['date'].dt.date.max()
 
-with st.sidebar:
-    # Menambahkan logo
-    image_url = "https://github.com/GdWidnyana/Analisis-Data-Sepeda-GdWidnyana/blob/main/dashboard/sepeda.jpg"
-    st.image(image_url, use_column_width=True)
+    with st.sidebar:
+        # Menambahkan logo
+        image_url = "https://raw.githubusercontent.com/GdWidnyana/Analisis-Data-Sepeda-GdWidnyana/main/dashboard/sepeda.jpg"
+        st.image(image_url, use_column_width=True)
 
-    # Memilih Start Date secara terpisah
-    start_date = st.date_input(
-        label='Start Date',
-        min_value=min_date,
-        max_value=max_date,
-        value=min_date  # Set nilai default menjadi min_date
-    )
+        # Memilih Start Date secara terpisah
+        start_date = st.date_input(
+            label='Start Date',
+            min_value=min_date,
+            max_value=max_date,
+            value=min_date  # Set nilai default menjadi min_date
+        )
 
-    # Memilih End Date secara terpisah
-    end_date = st.date_input(
-        label='End Date',
-        min_value=min_date,
-        max_value=max_date,
-        value=max_date  # Set nilai default menjadi max_date
-    )
+        # Memilih End Date secara terpisah
+        end_date = st.date_input(
+            label='End Date',
+            min_value=min_date,
+            max_value=max_date,
+            value=max_date  # Set nilai default menjadi max_date
+        )
 
-# Konversi start_date dan end_date menjadi datetime
-start_date = pd.to_datetime(start_date)
-end_date = pd.to_datetime(end_date)
+    # Konversi start_date dan end_date menjadi datetime
+    start_date = pd.to_datetime(start_date)
+    end_date = pd.to_datetime(end_date)
 
-# Filter data berdasarkan rentang tanggal
-main_df = all_df[(all_df["date"] >= start_date) & 
-                 (all_df["date"] <= end_date)]
+    # Filter data berdasarkan rentang tanggal
+    main_df = all_df[(all_df["date"] >= start_date) & 
+                     (all_df["date"] <= end_date)]
 
+    # Menyiapkan berbagai dataframe
+    daily_rent_df = create_daily_rent_df(main_df)
+    
+    # Anda dapat melanjutkan analisis lain di sini
+    st.write(daily_rent_df)
 
-# Menyiapkan berbagai dataframe
-daily_rent_df = create_daily_rent_df(main_df)
-daily_casual_rent_df = create_daily_casual_rent_df(main_df)
-daily_registered_rent_df = create_daily_registered_rent_df(main_df)
-season_rent_df = create_season_rent_df(main_df)
-monthly_rent_df = create_monthly_rent_df(main_df)
-yearly_rent_df = create_yearly_rent_df(main_df)
-weekday_rent_df = create_weekday_rent_df(main_df)
-workingday_rent_df = create_workingday_rent_df(main_df)
-holiday_rent_df = create_holiday_rent_df(main_df)
-weather_rent_df = create_weather_rent_df(main_df)
+else:
+    st.error("Data tidak berhasil dimuat dari URL")
+
 
 # Membuat judul dashboard
 # Membuat judul dashboard di tengah
