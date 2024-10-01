@@ -1,3 +1,4 @@
+# Importing required libraries
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -6,69 +7,100 @@ from babel.numbers import format_currency
 import plotly.express as px
 import plotly.graph_objects as go
 
+# Setting the seaborn style for all plots to 'dark'
 sns.set(style='dark')
 
 # Helper function yang dibutuhkan untuk menyiapkan berbagai dataframe
+# Fungsi di bawah ini digunakan untuk mempersiapkan berbagai dataframe yang akan digunakan dalam analisis data penyewaan sepeda.
+
+# Fungsi untuk membuat dataframe penyewaan harian (total semua penyewaan per hari)
 def create_daily_rent_df(df):
+    # Grouping data berdasarkan tanggal dan menghitung total penyewaan sepeda per hari
     daily_rent_df = df.groupby(by='date').agg({
        "count": "sum"
     }).reset_index()
     return daily_rent_df
-   
+
+# Fungsi untuk membuat dataframe penyewaan harian untuk penyewa kasual (casual)
 def create_daily_casual_rent_df(df):
+    # Grouping data berdasarkan tanggal dan menghitung total penyewaan kasual per hari
     daily_casual_rent_df = df.groupby(by='date').agg({
        "casual": "sum"
     }).reset_index()
     return daily_casual_rent_df
 
+# Fungsi untuk membuat dataframe penyewaan harian untuk penyewa terdaftar (registered)
 def create_daily_registered_rent_df(df):
+   # Grouping data berdasarkan tanggal dan menghitung total penyewaan terdaftar per hari
    daily_registered_rent_df = df.groupby(by='date').agg({
        "registered": "sum"
     }).reset_index()
    return daily_registered_rent_df
 
+# Fungsi untuk membuat dataframe penyewaan berdasarkan musim (season)
 def create_season_rent_df(df):
+    # Grouping data berdasarkan musim dan menghitung total penyewaan untuk penyewa terdaftar dan kasual
     season_rent_df = df.groupby(by='season')[['registered', 'casual']].sum().reset_index()
     return season_rent_df
 
+# Fungsi untuk membuat dataframe penyewaan bulanan
 def create_monthly_rent_df(df):
+    # Grouping data berdasarkan bulan dan menghitung total penyewaan per bulan
     monthly_rent_df = df.groupby(by='month').agg({
         'count': 'sum'
     })
+    
+    # Mendefinisikan urutan bulan yang benar
     ordered_months = [
         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
     ]
+    
+    # Mengurutkan dataframe berdasarkan urutan bulan dan mengisi dengan 0 jika tidak ada data
     monthly_rent_df = monthly_rent_df.reindex(ordered_months, fill_value=0)
     return monthly_rent_df
 
+# Fungsi untuk membuat dataframe penyewaan tahunan
 def create_yearly_rent_df(df):
+    # Grouping data berdasarkan tahun dan menghitung total penyewaan per tahun
     yearly_rent_df = df.groupby(by='year').agg({
         'count': 'sum'
     })
+    
+    # Mendefinisikan urutan tahun yang benar
     ordered_year = ['2011', '2012']
+    
+    # Mengurutkan dataframe berdasarkan urutan tahun dan mengisi dengan 0 jika tidak ada data
     yearly_rent_df = yearly_rent_df.reindex(ordered_year, fill_value=0)
     return yearly_rent_df
-    
+
+# Fungsi untuk membuat dataframe penyewaan berdasarkan hari dalam seminggu
 def create_weekday_rent_df(df):
+    # Grouping data berdasarkan hari dalam seminggu dan menghitung total penyewaan per hari
     weekday_rent_df = df.groupby(by='weekday').agg({
         'count': 'sum'
     }).reset_index()
     return weekday_rent_df
-    
+
+# Fungsi untuk membuat dataframe penyewaan berdasarkan hari kerja (working day)
 def create_workingday_rent_df(df):
+    # Grouping data berdasarkan apakah hari tersebut hari kerja atau bukan dan menghitung total penyewaan
     workingday_rent_df = df.groupby(by='workingday').agg({
         'count': 'sum'
     }).reset_index()
     return workingday_rent_df
 
+# Fungsi untuk membuat dataframe penyewaan berdasarkan hari libur (holiday)
 def create_holiday_rent_df(df):
+    # Grouping data berdasarkan apakah hari tersebut adalah hari libur dan menghitung total penyewaan
     holiday_rent_df = df.groupby(by='holiday').agg({
         'count': 'sum'
     }).reset_index()
     return holiday_rent_df
 
+# Fungsi untuk membuat dataframe penyewaan berdasarkan kondisi cuaca (weather)
 def create_weather_rent_df(df):
+    # Grouping data berdasarkan kondisi cuaca dan menghitung total penyewaan
     weather_rent_df = df.groupby(by='weather').agg({
         'count': 'sum'
     })
