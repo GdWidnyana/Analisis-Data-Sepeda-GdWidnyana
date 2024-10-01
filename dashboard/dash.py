@@ -266,67 +266,55 @@ st.plotly_chart(fig)
 
 st.write("------------------------------------------------")
 
-# # Visualisasi 3: Jumlah Penyewaan Sepeda per Jam
-# st.subheader('Tren Jumlah Penyewaan Sepeda per Jam')
-# hourly_counts = all_df.groupby('hour')['count'].mean().reset_index()
-# fig = px.line(
-#     hourly_counts,
-#     x='hour',
-#     y='count',
-#     markers=True,
-#     labels={'hour': 'hour', 'count': 'jumlah sewa'},
-#     title="perkembangan jumlah sewa setiap jam ",
-#     template='plotly'
-# )
-# st.plotly_chart(fig)
 
+def create_hourly_rent_df(df):
+    hourly_rent_df = df.groupby('hour')['count'].mean().reset_index()
+    hourly_rent_df['hour'] = hourly_rent_df['hour'].apply(lambda x: f"{x:02d}:00")
+    return hourly_rent_df
 
+# Your existing code for loading and filtering data...
 
-# Pastikan kolom 'date' adalah tipe datetime
-all_df['date'] = pd.to_datetime(all_df['date'])
+# Create hourly rental dataframe
+hourly_rent_df = create_hourly_rent_df(main_df)
 
-# Mengambil jam dari kolom 'date'
-all_df['hour'] = all_df['date'].dt.hour
-
-# Menghitung jumlah penyewaan (casual + registered) per jam
-hourly_rent_df = all_df.groupby('hour').agg({'casual': 'sum', 'registered': 'sum'}).reset_index()
-
-# Menjumlahkan total sewa
-hourly_rent_df['total'] = hourly_rent_df['casual'] + hourly_rent_df['registered']
-
-# Format jam menjadi string 'HH:00'
-hourly_rent_df['hour_str'] = hourly_rent_df['hour'].apply(lambda x: f"{x:02d}:00")
-
-# Visualisasi 1: Jumlah Penyewaan Sepeda Setiap Jam
-st.subheader('Jumlah Penyewaan Sepeda Setiap Jam')
-
-# Membuat grafik garis dengan kustomisasi
+# Create the visualization
+st.subheader('Tren Penyewaan Sepeda per Jam')
 fig = px.line(
     hourly_rent_df,
-    x='hour_str',  # Menggunakan kolom 'hour_str' untuk sumbu x
-    y='total',
+    x='hour',
+    y='count',
     markers=True,
-    labels={'hour_str': 'Jam', 'total': 'Jumlah Sewa'},
-    title='Perkembangan Jumlah Sewa Sepeda Setiap Jam',
-    template='plotly',
-    color_discrete_sequence=['blue']  # Menggunakan warna biru untuk garis
+    labels={'hour': 'Jam', 'count': 'Rata-rata Jumlah Sewa'},
+    title='Tren Penyewaan Sepeda per Jam',
+    template='plotly'
 )
 
-# Menyesuaikan layout grafik
-fig.update_traces(marker=dict(size=8, line=dict(width=2, color='DarkSlateGrey')),
-                  line=dict(width=3, color='blue'))
-
-# Mengupdate layout untuk menyesuaikan tampilan
+# Customize the layout
 fig.update_layout(
-    title_font=dict(size=20),
-    xaxis_title_font=dict(size=14),
-    yaxis_title_font=dict(size=14),
-    xaxis_tickfont=dict(size=12),
-    yaxis_tickfont=dict(size=12),
+    xaxis_title="Jam",
+    yaxis_title="Rata-rata Jumlah Sewa",
+    hovermode="x"
 )
 
-# Display the plot
-st.plotly_chart(fig)
+# Add hover data
+fig.update_traces(
+    hovertemplate="<b>Jam:</b> %{x}<br><b>Rata-rata Sewa:</b> %{y:.2f}<extra></extra>"
+)
+
+# Display the chart
+st.plotly_chart(fig, use_container_width=True)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
