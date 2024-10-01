@@ -12,6 +12,66 @@ def create_daily_rent_df(df):
        "count": "sum"
     }).reset_index()
     return daily_rent_df
+   
+def create_daily_casual_rent_df(df):
+    daily_casual_rent_df = df.groupby(by='date').agg({
+       "casual": "sum"
+    }).reset_index()
+    return daily_casual_rent_df
+
+def create_daily_registered_rent_df(df):
+   daily_registered_rent_df = df.groupby(by='date').agg({
+       "registered": "sum"
+    }).reset_index()
+   return daily_registered_rent_df
+
+def create_season_rent_df(df):
+    season_rent_df = df.groupby(by='season')[['registered', 'casual']].sum().reset_index()
+    return season_rent_df
+
+def create_monthly_rent_df(df):
+    monthly_rent_df = df.groupby(by='month').agg({
+        'count': 'sum'
+    })
+    ordered_months = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ]
+    monthly_rent_df = monthly_rent_df.reindex(ordered_months, fill_value=0)
+    return monthly_rent_df
+
+def create_yearly_rent_df(df):
+    yearly_rent_df = df.groupby(by='year').agg({
+        'count': 'sum'
+    })
+    ordered_year = ['2011', '2012']
+    yearly_rent_df = yearly_rent_df.reindex(ordered_year, fill_value=0)
+    return yearly_rent_df
+    
+def create_weekday_rent_df(df):
+    weekday_rent_df = df.groupby(by='weekday').agg({
+        'count': 'sum'
+    }).reset_index()
+    return weekday_rent_df
+    
+def create_workingday_rent_df(df):
+    workingday_rent_df = df.groupby(by='workingday').agg({
+        'count': 'sum'
+    }).reset_index()
+    return workingday_rent_df
+
+def create_holiday_rent_df(df):
+    holiday_rent_df = df.groupby(by='holiday').agg({
+        'count': 'sum'
+    }).reset_index()
+    return holiday_rent_df
+
+def create_weather_rent_df(df):
+    weather_rent_df = df.groupby(by='weather').agg({
+        'count': 'sum'
+    })
+    return weather_rent_df
+        
 
 # Load cleaned data
 url = "https://raw.githubusercontent.com/GdWidnyana/Analisis-Data-Sepeda-GdWidnyana/main/dashboard/clean_day.xlsx"
