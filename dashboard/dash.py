@@ -75,7 +75,17 @@ if all_df is not None:
 else:
     st.error("Data tidak berhasil dimuat dari URL")
 
-
+# Menyiapkan berbagai dataframe
+daily_rent_df = create_daily_rent_df(main_df)
+daily_casual_rent_df = create_daily_casual_rent_df(main_df)
+daily_registered_rent_df = create_daily_registered_rent_df(main_df)
+season_rent_df = create_season_rent_df(main_df)
+monthly_rent_df = create_monthly_rent_df(main_df)
+yearly_rent_df = create_yearly_rent_df(main_df)
+weekday_rent_df = create_weekday_rent_df(main_df)
+workingday_rent_df = create_workingday_rent_df(main_df)
+holiday_rent_df = create_holiday_rent_df(main_df)
+weather_rent_df = create_weather_rent_df(main_df)
 
 # Membuat judul dashboard
 # Membuat judul dashboard di tengah
