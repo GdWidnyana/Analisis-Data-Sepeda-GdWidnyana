@@ -283,20 +283,35 @@ st.write("------------------------------------------------")
 #     labels={'hour': 'Hour of Day', 'count': 'Average Rentals'}
 # )
 
-st.plotly_chart(fig)
+# Pastikan kolom 'date' adalah tipe datetime
+all_df['date'] = pd.to_datetime(all_df['date'])
 
-# Visualisasi 3: Jumlah Penyewaan Sepeda per Jam
-st.subheader('Tren Jumlah Penyewaan Sepeda per Jam')
-hourly_counts = all_df.groupby('hour')['count'].mean().reset_index()
+# Mengambil jam dari kolom 'date'
+all_df['hour'] = all_df['date'].dt.hour
+
+# Menghitung jumlah penyewaan (casual + registered) per jam
+hourly_rent_df = all_df.groupby('hour').agg({'casual': 'sum', 'registered': 'sum'}).reset_index()
+
+# Menjumlahkan total sewa
+hourly_rent_df['total'] = hourly_rent_df['casual'] + hourly_rent_df['registered']
+
+# Streamlit application
+st.title('Visualisasi Penyewaan Sepeda')
+
+# Visualisasi 1: Jumlah Penyewaan Sepeda Setiap Jam
+st.subheader('Jumlah Penyewaan Sepeda Setiap Jam')
+
 fig = px.line(
-    hourly_counts,
+    hourly_rent_df,
     x='hour',
-    y='count',
-    markers=True,
-    labels={'hour': 'jam', 'count': 'jumlah sewa'},
-    title="perkembangan jumlah sewa setiap jam ",
-    template='plotly'
+    y='total',
+    labels={'hour': 'Jam', 'total': 'Jumlah Sewa'},
+    title='Jumlah Sewa Sepeda Setiap Jam',
+    template='plotly',
+    color_discrete_sequence=['blue']  # Menggunakan warna biru untuk garis
 )
+
+# Display the plot
 st.plotly_chart(fig)
 
 
