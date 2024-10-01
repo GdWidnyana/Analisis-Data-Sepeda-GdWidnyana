@@ -295,6 +295,9 @@ hourly_rent_df = all_df.groupby('hour').agg({'casual': 'sum', 'registered': 'sum
 # Menjumlahkan total sewa
 hourly_rent_df['total'] = hourly_rent_df['casual'] + hourly_rent_df['registered']
 
+# Format jam menjadi string 'HH.MM'
+hourly_rent_df['hour'] = hourly_rent_df['hour'].apply(lambda x: f"{x:02d}.00")
+
 # Streamlit application
 st.title('Visualisasi Penyewaan Sepeda')
 
