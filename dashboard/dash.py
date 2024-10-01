@@ -281,6 +281,41 @@ fig = px.line(
 st.plotly_chart(fig)
 
 
+if 'date' in all_df.columns:
+    all_df['date'] = pd.to_datetime(all_df['date'])
+else:
+    st.error("Kolom 'date' tidak ditemukan dalam dataset")
+
+# Step 1: Prepare the Data
+# Extract the hour from the 'date' column
+all_df['hour'] = all_df['date'].dt.hour
+
+# Step 2: Group by hour and sum the counts
+hourly_rent_df = all_df.groupby('hour').agg({'count': 'sum'}).reset_index()
+
+# Step 3: Create the Visualization
+st.subheader("Tren Sewa Sepeda Setiap Jam")
+fig_hourly = px.line(
+    hourly_rent_df,
+    x='hour',
+    y='count',
+    markers=True,
+    labels={'hour': 'Jam', 'count': 'Total Penyewaan'},
+    title='Jumlah Penyewaan Sepeda Setiap Jam',
+    template='plotly'
+)
+
+# Update layout for better visuals
+fig_hourly.update_traces(line=dict(color='blue'))
+fig_hourly.update_layout(
+    xaxis=dict(tickmode='linear', title='Jam'),
+    yaxis_title='Jumlah Penyewaan',
+)
+
+# Display the plot
+st.plotly_chart(fig_hourly)
+
+
 st.write("------------------------------------------------")
 
 # Visualisasi 4: Hubungan Suhu, Kelembaban, dan Kecepatan Angin dengan Jumlah Penyewaan
