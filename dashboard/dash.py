@@ -268,7 +268,7 @@ st.write("------------------------------------------------")
 
 # Visualisasi 3: Jumlah Penyewaan Sepeda per Jam
 st.subheader('Tren Jumlah Penyewaan Sepeda per Jam')
-hourly_counts = all_df.groupby('hour')['count'].mean().reset_index()
+hourly_counts = main_df.groupby('hour')['count'].mean().reset_index()
 fig = px.line(
     hourly_counts,
     x='hour',
