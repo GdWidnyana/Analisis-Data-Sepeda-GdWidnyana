@@ -304,6 +304,7 @@ st.title('Visualisasi Penyewaan Sepeda')
 # Visualisasi 1: Jumlah Penyewaan Sepeda Setiap Jam
 st.subheader('Jumlah Penyewaan Sepeda Setiap Jam')
 
+# Membuat grafik garis
 fig = px.line(
     hourly_rent_df,
     x='hour',
@@ -316,6 +317,11 @@ fig = px.line(
 
 # Display the plot
 st.plotly_chart(fig)
+
+# Menampilkan jumlah sewa per jam
+st.subheader('Jumlah Sewa per Jam')
+for index, row in hourly_rent_df.iterrows():
+    st.write(f"Jam {row['hour']} jumlah sewa {row['total']}")
 
 
 st.write("------------------------------------------------")
