@@ -255,13 +255,14 @@ st.plotly_chart(fig)
 
 st.write("------------------------------------------------")
 
-# Make sure the 'date' column is converted to datetime if it's not already
+
+# Ensure 'date' is in datetime format
 all_df['date'] = pd.to_datetime(all_df['date'])
 
-# Extract the 'hour' from the 'date' column
+# Extract the hour from the 'date' column
 all_df['hour'] = all_df['date'].dt.hour
-st.subheader('Tren Jumlah Penyewaan Sepeda per Jam')
-# Now you can group by the 'hour' column
+
+# Now you can safely group by 'hour' for visualization
 hourly_counts = all_df.groupby('hour')['count'].mean().reset_index()
 
 # Plotting the data
