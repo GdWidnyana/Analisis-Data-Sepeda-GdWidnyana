@@ -75,7 +75,7 @@ def create_weather_rent_df(df):
     return weather_rent_df
         
 # Load cleaned data
-url = "dataset/clean_day.csv"
+url = "https://raw.githubusercontent.com/GdWidnyana/Analisis-Data-Sepeda-GdWidnyana/main/dataset/clean_day.csv"
 
 try:
     all_df = pd.read_csv(url)
