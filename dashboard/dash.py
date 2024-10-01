@@ -266,57 +266,19 @@ st.plotly_chart(fig)
 
 st.write("------------------------------------------------")
 
-
-def create_hourly_rent_df(df):
-    hourly_rent_df = df.groupby('hour')['count'].mean().reset_index()
-    hourly_rent_df['hour'] = hourly_rent_df['hour'].apply(lambda x: f"{x:02d}:00")
-    return hourly_rent_df
-
-# Your existing code for loading and filtering data...
-
-# Create hourly rental dataframe
-hourly_rent_df = create_hourly_rent_df(main_df)
-
-# Create the visualization
-st.subheader('Tren Penyewaan Sepeda per Jam')
+# Visualisasi 3: Jumlah Penyewaan Sepeda per Jam
+st.subheader('Tren Jumlah Penyewaan Sepeda per Jam')
+hourly_counts = all_df.groupby('hour')['count'].mean().reset_index()
 fig = px.line(
-    hourly_rent_df,
+    hourly_counts,
     x='hour',
     y='count',
     markers=True,
-    labels={'hour': 'Jam', 'count': 'Rata-rata Jumlah Sewa'},
-    title='Tren Penyewaan Sepeda per Jam',
+    labels={'hour': 'hour', 'count': 'jumlah sewa'},
+    title="perkembangan jumlah sewa setiap jam ",
     template='plotly'
 )
-
-# Customize the layout
-fig.update_layout(
-    xaxis_title="Jam",
-    yaxis_title="Rata-rata Jumlah Sewa",
-    hovermode="x"
-)
-
-# Add hover data
-fig.update_traces(
-    hovertemplate="<b>Jam:</b> %{x}<br><b>Rata-rata Sewa:</b> %{y:.2f}<extra></extra>"
-)
-
-# Display the chart
-st.plotly_chart(fig, use_container_width=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+st.plotly_chart(fig)
 
 
 st.write("------------------------------------------------")
