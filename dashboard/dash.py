@@ -135,6 +135,15 @@ if all_df is not None:
 else:
     st.error("Data tidak berhasil dimuat dari URL")
 
+# Konversi start_date dan end_date menjadi datetime
+start_date = pd.to_datetime(start_date)
+end_date = pd.to_datetime(end_date)
+
+# Filter data berdasarkan rentang tanggal
+main_df = all_df[(all_df["date"] >= start_date) & 
+                 (all_df["date"] <= end_date)]
+
+
 # Menyiapkan berbagai dataframe
 daily_rent_df = create_daily_rent_df(main_df)
 daily_casual_rent_df = create_daily_casual_rent_df(main_df)
@@ -256,39 +265,53 @@ st.plotly_chart(fig)
 st.write("------------------------------------------------")
 
 
-# Ensure 'date' is in datetime format
-all_df['date'] = pd.to_datetime(all_df['date'])
+# # Ensure 'date' is in datetime format
+# all_df['date'] = pd.to_datetime(all_df['date'])
 
-# Extract the hour from the 'date' column
-all_df['hour'] = all_df['date'].dt.hour
+# # Extract the hour from the 'date' column
+# all_df['hour'] = all_df['date'].dt.hour
 
-# Now you can safely group by 'hour' for visualization
-hourly_counts = all_df.groupby('hour')['count'].mean().reset_index()
-
-# Plotting the data
-fig = px.line(
-    hourly_counts,
-    x='hour',
-    y='count',
-    title='Average Number of Bike Rentals per Hour',
-    labels={'hour': 'Hour of Day', 'count': 'Average Rentals'}
-)
-
-st.plotly_chart(fig)
-
-# # Visualisasi 3: Jumlah Penyewaan Sepeda per Jam
-# st.subheader('Tren Jumlah Penyewaan Sepeda per Jam')
+# # Now you can safely group by 'hour' for visualization
 # hourly_counts = all_df.groupby('hour')['count'].mean().reset_index()
+
+# # Plotting the data
 # fig = px.line(
 #     hourly_counts,
 #     x='hour',
 #     y='count',
-#     markers=True,
-#     labels={'hour': 'hour', 'count': 'jumlah sewa'},
-#     title="perkembangan jumlah sewa setiap jam ",
-#     template='plotly'
+#     title='Average Number of Bike Rentals per Hour',
+#     labels={'hour': 'Hour of Day', 'count': 'Average Rentals'}
 # )
+
 # st.plotly_chart(fig)
+
+# # # Visualisasi 3: Jumlah Penyewaan Sepeda per Jam
+# # st.subheader('Tren Jumlah Penyewaan Sepeda per Jam')
+# # hourly_counts = all_df.groupby('hour')['count'].mean().reset_index()
+# # fig = px.line(
+# #     hourly_counts,
+# #     x='hour',
+# #     y='count',
+# #     markers=True,
+# #     labels={'hour': 'hour', 'count': 'jumlah sewa'},
+# #     title="perkembangan jumlah sewa setiap jam ",
+# #     template='plotly'
+# # )
+# # st.plotly_chart(fig)
+
+# Visualisasi 3: Jumlah Penyewaan Sepeda per Jam
+st.subheader('Tren Jumlah Penyewaan Sepeda per Jam')
+hourly_counts = all_df.groupby('hour')['count'].mean().reset_index()
+fig = px.line(
+    hourly_counts,
+    x='hour',
+    y='count',
+    markers=True,
+    labels={'hour': 'hour', 'count': 'jumlah sewa'},
+    title="perkembangan jumlah sewa setiap jam ",
+    template='plotly'
+)
+st.plotly_chart(fig)
 
 
 st.write("------------------------------------------------")
