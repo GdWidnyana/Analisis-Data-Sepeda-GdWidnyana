@@ -280,6 +280,8 @@ st.write("------------------------------------------------")
 # )
 # st.plotly_chart(fig)
 
+
+
 # Pastikan kolom 'date' adalah tipe datetime
 all_df['date'] = pd.to_datetime(all_df['date'])
 
@@ -292,33 +294,42 @@ hourly_rent_df = all_df.groupby('hour').agg({'casual': 'sum', 'registered': 'sum
 # Menjumlahkan total sewa
 hourly_rent_df['total'] = hourly_rent_df['casual'] + hourly_rent_df['registered']
 
-# Format jam menjadi string 'HH.MM' dan memastikan kolom 'hour' tetap ada
-hourly_rent_df['hour_str'] = hourly_rent_df['hour'].apply(lambda x: f"{x:02d}.00")
-
-# Streamlit application
-st.title('Visualisasi Penyewaan Sepeda')
+# Format jam menjadi string 'HH:00'
+hourly_rent_df['hour_str'] = hourly_rent_df['hour'].apply(lambda x: f"{x:02d}:00")
 
 # Visualisasi 1: Jumlah Penyewaan Sepeda Setiap Jam
 st.subheader('Jumlah Penyewaan Sepeda Setiap Jam')
 
-# Membuat grafik garis
+# Membuat grafik garis dengan kustomisasi
 fig = px.line(
     hourly_rent_df,
     x='hour_str',  # Menggunakan kolom 'hour_str' untuk sumbu x
     y='total',
+    markers=True,
     labels={'hour_str': 'Jam', 'total': 'Jumlah Sewa'},
-    title='Jumlah Sewa Sepeda Setiap Jam',
+    title='Perkembangan Jumlah Sewa Sepeda Setiap Jam',
     template='plotly',
     color_discrete_sequence=['blue']  # Menggunakan warna biru untuk garis
+)
+
+# Menyesuaikan layout grafik
+fig.update_traces(marker=dict(size=8, line=dict(width=2, color='DarkSlateGrey')),
+                  line=dict(width=3, color='blue'))
+
+# Mengupdate layout untuk menyesuaikan tampilan
+fig.update_layout(
+    title_font=dict(size=20),
+    xaxis_title_font=dict(size=14),
+    yaxis_title_font=dict(size=14),
+    xaxis_tickfont=dict(size=12),
+    yaxis_tickfont=dict(size=12),
 )
 
 # Display the plot
 st.plotly_chart(fig)
 
-# Menampilkan jumlah sewa per jam
-st.subheader('Jumlah Sewa per Jam')
-for index, row in hourly_rent_df.iterrows():
-    st.write(f"Jam {row['hour_str']} jumlah sewa {row['total']}")
+
+
 
 st.write("------------------------------------------------")
 
