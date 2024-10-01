@@ -2,7 +2,7 @@
 
 ## Clone repository ini dengan
 ```bash
-git clone https://github.com/Tresnanda/projectdicoding-treshnanda.git
+git clone https://github.com/GdWidnyana/Analisis-Data-Sepeda-GdWidnyana.git
 ```
 
 ## Buat sebuah virtual environment
@@ -11,7 +11,7 @@ python -m venv venv
 venv\Scripts\Activate
 ```
 
-## Install library yang dibutuhkan
+## Install library yang digunakan di project ini
 ```bash
 pip install -r requirements.txt
 ```
@@ -22,5 +22,5 @@ cd dashboard
 streamlit run dashboard.py
 ```
 
-## Dashboard juga dapat diakses menggunakan streamlit app di link berikut:
-- 
+## Anda juga dapat mengakses dashboard melalui aplikasi Streamlit di tautan berikut:
+- https://dashboard-sepeda-gdwidnyana.streamlit.app/ 
