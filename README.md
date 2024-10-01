@@ -23,4 +23,4 @@ streamlit run dashboard.py
 ```
 
 ## Dashboard juga dapat diakses menggunakan streamlit app di link berikut:
-- https://projectdicoding-treshnanda.streamlit.app/
+- 
