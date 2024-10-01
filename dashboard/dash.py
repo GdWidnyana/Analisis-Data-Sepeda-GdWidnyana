@@ -75,12 +75,12 @@ def create_weather_rent_df(df):
     return weather_rent_df
         
 # Load cleaned data
-url = "https://raw.githubusercontent.com/coconusz/Bike-Sharing-Dataset/main/Dashboard/all_data.csv"
+url = "https://github.com/GdWidnyana/Analisis-Data-Sepeda-GdWidnyana/blob/main/dashboard/clean_day.xlsx"
 
 try:
-    all_df = pd.read_csv(url)
+    all_df = pd.read_excel(url)
 except pd.errors.ParserError as e:
-    print(f"Error parsing CSV: {e}")
+    print(f"Error parsing Excel: {e}")
 except Exception as e:
     print(f"Error: {e}")
 
@@ -93,7 +93,7 @@ max_date = all_df['date'].dt.date.max()
 
 with st.sidebar:
     # Menambahkan logo
-    image_url = "sepeda.jpg"
+    image_url = "https://github.com/GdWidnyana/Analisis-Data-Sepeda-GdWidnyana/blob/main/dashboard/sepeda.jpg"
     st.image(image_url, use_column_width=True)
 
     # Memilih Start Date secara terpisah
