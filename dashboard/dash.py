@@ -307,7 +307,7 @@ fig = px.line(
     x='hour',
     y='count',
     markers=True,
-    labels={'hour': 'hour', 'count': 'jumlah sewa'},
+    labels={'hour': 'jam', 'count': 'jumlah sewa'},
     title="perkembangan jumlah sewa setiap jam ",
     template='plotly'
 )
