@@ -80,7 +80,7 @@ url = "https://raw.githubusercontent.com/GdWidnyana/Analisis-Data-Sepeda-GdWidny
 
 try:
     # Membaca file Excel dengan openpyxl
-    all_df = pd.read_excel(url, engine='openpyxl')
+    all_df = pd.read_excel(url)
 except pd.errors.ParserError as e:
     st.error(f"Error parsing Excel: {e}")
 except Exception as e:
