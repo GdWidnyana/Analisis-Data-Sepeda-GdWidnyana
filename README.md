@@ -16,10 +16,11 @@ venv\Scripts\Activate
 pip install -r requirements.txt
 ```
 
-## Jalankan dashboard.py
+## Jalankan dash.py
+
 ```bash
 cd dashboard
-streamlit run dashboard.py
+streamlit run dash.py
 ```
 
 ## Anda juga dapat mengakses dashboard melalui aplikasi Streamlit di tautan berikut:
