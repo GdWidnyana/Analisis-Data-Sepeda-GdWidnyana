@@ -75,7 +75,7 @@ def create_weather_rent_df(df):
     return weather_rent_df
         
 # Load cleaned data
-url = "https://raw.githubusercontent.com/coconusz/Bike-Sharing-Dataset/main/Dashboard/all_data.csv"
+url = "dataset/clean_day.csv"
 
 try:
     all_df = pd.read_csv(url)
