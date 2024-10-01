@@ -6,6 +6,8 @@ from babel.numbers import format_currency
 import plotly.express as px
 import plotly.graph_objects as go
 
+sns.set(style='dark')
+
 # Helper function yang dibutuhkan untuk menyiapkan berbagai dataframe
 def create_daily_rent_df(df):
     daily_rent_df = df.groupby(by='date').agg({
@@ -118,19 +120,19 @@ if all_df is not None:
             value=max_date  # Set nilai default menjadi max_date
         )
 
-    # Konversi start_date dan end_date menjadi datetime
-    start_date = pd.to_datetime(start_date)
-    end_date = pd.to_datetime(end_date)
+    # # Konversi start_date dan end_date menjadi datetime
+    # start_date = pd.to_datetime(start_date)
+    # end_date = pd.to_datetime(end_date)
 
-    # Filter data berdasarkan rentang tanggal
-    main_df = all_df[(all_df["date"] >= start_date) & 
-                     (all_df["date"] <= end_date)]
+    # # Filter data berdasarkan rentang tanggal
+    # main_df = all_df[(all_df["date"] >= start_date) & 
+    #                  (all_df["date"] <= end_date)]
 
-    # Menyiapkan berbagai dataframe
-    daily_rent_df = create_daily_rent_df(main_df)
+    # # Menyiapkan berbagai dataframe
+    # daily_rent_df = create_daily_rent_df(main_df)
     
-    # Tampilkan dataframe untuk verifikasi
-    st.write(daily_rent_df)
+    # # Tampilkan dataframe untuk verifikasi
+    # st.write(daily_rent_df)
 
 else:
     st.error("Data tidak berhasil dimuat dari URL")
@@ -264,65 +266,19 @@ st.plotly_chart(fig)
 
 st.write("------------------------------------------------")
 
-
-# # Ensure 'date' is in datetime format
-# all_df['date'] = pd.to_datetime(all_df['date'])
-
-# # Extract the hour from the 'date' column
-# all_df['hour'] = all_df['date'].dt.hour
-
-# # Now you can safely group by 'hour' for visualization
-# hourly_counts = all_df.groupby('hour')['count'].mean().reset_index()
-# # st.subheader('Tren Jumlah Penyewaan Sepeda per Jam')
-# # Plotting the data
-# fig = px.line(
-#     hourly_counts,
-#     x='hour',
-#     y='count',
-#     title='Average Number of Bike Rentals per Hour',
-#     labels={'hour': 'Hour of Day', 'count': 'Average Rentals'}
-# )
-
-# Pastikan kolom 'date' adalah tipe datetime
-all_df['date'] = pd.to_datetime(all_df['date'])
-
-# Mengambil jam dari kolom 'date'
-all_df['hour'] = all_df['date'].dt.hour
-
-# Menghitung jumlah penyewaan (casual + registered) per jam
-hourly_rent_df = all_df.groupby('hour').agg({'casual': 'sum', 'registered': 'sum'}).reset_index()
-
-# Menjumlahkan total sewa
-hourly_rent_df['total'] = hourly_rent_df['casual'] + hourly_rent_df['registered']
-
-# Format jam menjadi string 'HH.MM'
-hourly_rent_df['hour'] = hourly_rent_df['hour'].apply(lambda x: f"{x:02d}.00")
-
-# Streamlit application
-st.title('Visualisasi Penyewaan Sepeda')
-
-# Visualisasi 1: Jumlah Penyewaan Sepeda Setiap Jam
-st.subheader('Jumlah Penyewaan Sepeda Setiap Jam')
-
-# Membuat grafik garis
+# Visualisasi 3: Jumlah Penyewaan Sepeda per Jam
+st.subheader('Tren Jumlah Penyewaan Sepeda per Jam')
+hourly_counts = all_df.groupby('hour')['count'].mean().reset_index()
 fig = px.line(
-    hourly_rent_df,
+    hourly_counts,
     x='hour',
-    y='total',
-    labels={'hour': 'Jam', 'total': 'Jumlah Sewa'},
-    title='Jumlah Sewa Sepeda Setiap Jam',
-    template='plotly',
-    color_discrete_sequence=['blue']  # Menggunakan warna biru untuk garis
+    y='count',
+    markers=True,
+    labels={'hour': 'hour', 'count': 'jumlah sewa'},
+    title="perkembangan jumlah sewa setiap jam ",
+    template='plotly'
 )
-
-# Display the plot
 st.plotly_chart(fig)
-
-# Menampilkan jumlah sewa per jam
-st.subheader('Jumlah Sewa per Jam')
-for index, row in hourly_rent_df.iterrows():
-    st.write(f"Jam {row['hour']} jumlah sewa {row['total']}")
-
 
 st.write("------------------------------------------------")
 
