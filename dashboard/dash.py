@@ -265,14 +265,14 @@ st.plotly_chart(fig)
 st.write("------------------------------------------------")
 
 
-# # Ensure 'date' is in datetime format
-# all_df['date'] = pd.to_datetime(all_df['date'])
+# Ensure 'date' is in datetime format
+all_df['date'] = pd.to_datetime(all_df['date'])
 
-# # Extract the hour from the 'date' column
-# all_df['hour'] = all_df['date'].dt.hour
+# Extract the hour from the 'date' column
+all_df['hour'] = all_df['date'].dt.hour
 
-# # Now you can safely group by 'hour' for visualization
-# hourly_counts = all_df.groupby('hour')['count'].mean().reset_index()
+# Now you can safely group by 'hour' for visualization
+hourly_counts = all_df.groupby('hour')['count'].mean().reset_index()
 
 # # Plotting the data
 # fig = px.line(
