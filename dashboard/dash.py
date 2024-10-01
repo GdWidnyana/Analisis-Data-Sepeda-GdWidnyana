@@ -17,13 +17,15 @@ def create_daily_rent_df(df):
 url = "https://raw.githubusercontent.com/GdWidnyana/Analisis-Data-Sepeda-GdWidnyana/main/dashboard/clean_day.xlsx"
 
 try:
+    # Membaca file Excel dengan openpyxl
     all_df = pd.read_excel(url, engine='openpyxl')
 except pd.errors.ParserError as e:
-    print(f"Error parsing Excel: {e}")
+    st.error(f"Error parsing Excel: {e}")
 except Exception as e:
-    print(f"Error: {e}")
+    st.error(f"Error: {e}")
+    all_df = None
 
-# Pastikan 'all_df' terdefinisi
+# Cek apakah all_df berhasil dimuat
 if all_df is not None:
     # Konversi kolom 'date' menjadi tipe datetime
     if 'date' in all_df.columns:
@@ -67,11 +69,12 @@ if all_df is not None:
     # Menyiapkan berbagai dataframe
     daily_rent_df = create_daily_rent_df(main_df)
     
-    # Anda dapat melanjutkan analisis lain di sini
+    # Tampilkan dataframe untuk verifikasi
     st.write(daily_rent_df)
 
 else:
     st.error("Data tidak berhasil dimuat dari URL")
+
 
 
 # Membuat judul dashboard
