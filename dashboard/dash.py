@@ -125,7 +125,7 @@ max_date = all_df['date'].dt.date.max()
 
 with st.sidebar:
     # Menambahkan logo
-    image_url = "https://github.com/GdWidnyana/Analisis-Data-Sepeda-GdWidnyana/blob/main/dashboard/sepeda.jpg"
+    image_url = "https://raw.githubusercontent.com/GdWidnyana/Analisis-Data-Sepeda-GdWidnyana/main/dashboard/sepeda.jpg"
     st.image(image_url, use_column_width=True)
 
     # Memilih Start Date secara terpisah
