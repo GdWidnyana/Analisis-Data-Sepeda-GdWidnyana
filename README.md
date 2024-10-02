@@ -16,8 +16,7 @@ venv\Scripts\Activate
 pip install -r requirements.txt
 ```
 
-## Jalankan dash.py
-
+## Jalankan project utama di file dash.py (gunakan terminal di Visual studio code)
 ```bash
 cd dashboard
 streamlit run dash.py
