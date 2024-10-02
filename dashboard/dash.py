@@ -107,7 +107,7 @@ def create_weather_rent_df(df):
     return weather_rent_df
         
 # Load cleaned data
-url = "https://raw.githubusercontent.com/GdWidnyana/Analisis-Data-Sepeda-GdWidnyana/main/dataset/clean_day.csv"
+url = "https://raw.githubusercontent.com/coconusz/Bike-Sharing-Dataset/main/Dashboard/all_data.csv"
 
 try:
     all_df = pd.read_csv(url)
@@ -125,7 +125,7 @@ max_date = all_df['date'].dt.date.max()
 
 with st.sidebar:
     # Menambahkan logo
-    image_url = "https://raw.githubusercontent.com/GdWidnyana/Analisis-Data-Sepeda-GdWidnyana/main/dashboard/sepeda.jpg"
+    image_url = "sepeda.jpg"
     st.image(image_url, use_column_width=True)
 
     # Memilih Start Date secara terpisah
@@ -450,44 +450,43 @@ st.plotly_chart(fig_segments)
 
 st.write("------------------------------------------------")
 # Bagian untuk analisis Korelasi
-st.header('🚴‍♂️ Feature Correlation with Count 🧑‍💻')
+st.header('🚴‍♂️ Korelasi Fitur-Fitur yang berhubungan dengan Count (Jumlah Sewa Sepeda) 🧑‍💻')
 
-# Menghitung korelasi
-correlation_df = all_df.corr()
+# Filter hanya kolom numerik
+numerical_df = all_df.select_dtypes(include=['float64', 'int64'])
 
-# Mengambil korelasi terhadap 'count'
-count_corr = correlation_df['count'].sort_values(ascending=False)
+# Menghitung matriks korelasi dari dataset numerik
+correlation_matrix = numerical_df.corr()
 
+# Menampilkan heatmap menggunakan Streamlit
 st.write("------------------------------------------------")
-# Menampilkan tabel korelasi
-st.subheader('Correlation of Features with Count')
-st.dataframe(count_corr)
+st.subheader('Matriks Korelasi Fitur Numerik')
 
-# Visualisasi Korelasi
-fig_corr = px.bar(
-    count_corr,
-    x=count_corr.index,
-    y=count_corr.values,
-    title='Feature Correlation with Count',
-    labels={'x': 'Features', 'y': 'Correlation Coefficient'},
-    color=count_corr.values,
-    color_continuous_scale=px.colors.sequential.Viridis
-)
+# Visualisasi heatmap menggunakan Seaborn dan Matplotlib
+fig, ax = plt.subplots(figsize=(12, 8))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0, ax=ax)
 
-st.plotly_chart(fig_corr)
+# Menampilkan grafik pada Streamlit
+st.pyplot(fig)
 
-st.write("------------------------------------------------")
-# Deskripsi fitur dengan korelasi tertinggi dan terendah
-st.subheader('Hubungan fitur terendah dan teratas yang berkorelasi dengan jumlah "count"')
-top_features = count_corr.head(5)  # Fitur dengan korelasi tertinggi
-bottom_features = count_corr.tail(5)  # Fitur dengan korelasi terendah
+# Mengambil korelasi terhadap 'count' dan mengurutkannya
+correlation_with_count = correlation_matrix['count'].sort_values(ascending=False)
 
-st.write('### Fitur-Fitur dengan korelasi tinggi:')
-for feature, score in top_features.items():
+# Mendapatkan fitur dengan korelasi tertinggi dan terendah terhadap 'count'
+top_correlated_features = correlation_with_count.head(5)  # 5 fitur dengan korelasi tertinggi
+bottom_correlated_features = correlation_with_count.tail(5)  # 5 fitur dengan korelasi terendah
+
+# Menampilkan deskripsi fitur dengan korelasi tertinggi dan terendah
+st.subheader('Fitur yang Berkorelasi dengan Count')
+
+st.write('### Fitur dengan Korelasi Tertinggi terhadap Count:')
+st.write("Fitur berkorelasi tinggi memiliki keterhubungan kuat terhadap fitur count")
+for feature, score in top_correlated_features.items():
     st.write(f"- **{feature}**: {score:.2f}")
 
-st.write('### Fitur-Fitur dengan korelasi rendah:')
-for feature, score in bottom_features.items():
+st.write('### Fitur dengan Korelasi Terendah terhadap Count:')
+st.write("Fitur berkorelasi rendah memiliki keterhubungan lemah terhadap fitur count")
+for feature, score in bottom_correlated_features.items():
     st.write(f"- **{feature}**: {score:.2f}")
 
 st.caption('Copyright (c) I Gede Widnyana 2024')
