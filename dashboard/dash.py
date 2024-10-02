@@ -458,27 +458,39 @@ numerical_df = all_df.select_dtypes(include=['float64', 'int64'])
 # Menghitung matriks korelasi dari dataset numerik
 correlation_matrix = numerical_df.corr()
 
-# Menampilkan heatmap menggunakan Streamlit
-st.write("------------------------------------------------")
-st.subheader('Matriks Korelasi Fitur Numerik')
-
-# Visualisasi heatmap menggunakan Seaborn dan Matplotlib
-fig, ax = plt.subplots(figsize=(12, 8))
-sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0, ax=ax)
-
-# Menampilkan grafik pada Streamlit
-st.pyplot(fig)
-
 # Mengambil korelasi terhadap 'count' dan mengurutkannya
 correlation_with_count = correlation_matrix['count'].sort_values(ascending=False)
+
+# Mengubah ke DataFrame untuk mempermudah visualisasi
+correlation_df = correlation_with_count.reset_index()
+correlation_df.columns = ['Feature', 'Correlation']
+
+# Membuat diagram batang interaktif menggunakan Plotly
+fig = px.bar(
+    correlation_df,
+    x='Feature',
+    y='Correlation',
+    color='Correlation',
+    color_continuous_scale='RdBu',
+    title='Korelasi Fitur-Fitur terhadap Count',
+    labels={'Correlation': 'Nilai Korelasi', 'Feature': 'Fitur'},
+    template='plotly'
+)
+
+# Menambahkan sorting berdasarkan nilai korelasi
+fig.update_layout(xaxis={'categoryorder': 'total descending'})
+
+# Menampilkan grafik pada Streamlit
+st.plotly_chart(fig)
+
+st.write('### Analisis Korelasi Fitur')
+st.write("Fitur dengan korelasi tinggi terhadap count menunjukkan keterkaitan yang kuat dengan jumlah sewa sepeda, sedangkan fitur dengan korelasi rendah memiliki hubungan yang lemah.")
 
 # Mendapatkan fitur dengan korelasi tertinggi dan terendah terhadap 'count'
 top_correlated_features = correlation_with_count.head(5)  # 5 fitur dengan korelasi tertinggi
 bottom_correlated_features = correlation_with_count.tail(5)  # 5 fitur dengan korelasi terendah
 
 # Menampilkan deskripsi fitur dengan korelasi tertinggi dan terendah
-st.subheader('Fitur yang Berkorelasi dengan Count')
-
 st.write('### Fitur dengan Korelasi Tertinggi terhadap Count:')
 st.write("Fitur berkorelasi tinggi memiliki keterhubungan kuat terhadap fitur count")
 for feature, score in top_correlated_features.items():
