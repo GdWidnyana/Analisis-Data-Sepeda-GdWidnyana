@@ -1,4 +1,4 @@
-# Cara menjalankan dashboard
+# Cara menjalankan dashboard streamlit pada file dash.py
 
 ## Clone repository ini dengan
 ```bash
