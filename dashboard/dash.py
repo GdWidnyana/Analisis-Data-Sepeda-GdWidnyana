@@ -203,14 +203,44 @@ fig = px.line(
 fig.update_traces(line=dict(color='green'))
 st.plotly_chart(fig)
 
-# Membuat jumlah penyewa sepeda per tahun
-all_df['month'] = pd.Categorical(all_df['month'], categories=
-    ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-    ordered=True)
+# # Insight otomatis
+# if monthly_rent_df['count'].is_monotonic_increasing:
+#     insight = "Terjadi peningkatan jumlah penyewa sepeda setiap bulan secara konsisten."
+# elif monthly_rent_df['count'].is_monotonic_decreasing:
+#     insight = "Jumlah penyewa sepeda mengalami penurunan setiap bulan."
+# else:
+#     max_month = monthly_rent_df['count'].idxmax()
+#     min_month = monthly_rent_df['count'].idxmin()
+#     insight = (
+#         f"Puncak penyewaan sepeda terjadi pada bulan {max_month}, "
+#         f"sedangkan jumlah terendah terjadi pada bulan {min_month}."
+#     )
+# Visualisasi 2: Jumlah Penyewa Sepeda per Tahun
+all_df['month'] = pd.Categorical(
+    all_df['month'],
+    categories=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    ordered=True
+)
 
 monthly_counts = all_df.groupby(by=["month", "year"]).agg({
     "count": "sum"
 }).reset_index()
+# Mendapatkan bulan dengan jumlah penyewaan tertinggi dan terendah
+max_month = monthly_rent_df['count'].idxmax()
+max_rent = monthly_rent_df['count'].max()
+
+min_month = monthly_rent_df['count'].idxmin()
+min_rent = monthly_rent_df['count'].min()
+
+# Menampilkan insight dengan newline agar tidak menempel
+insight = (
+    f"📈 Puncak penyewaan sepeda terjadi pada bulan **{max_month}** dengan **{max_rent} penyewaan**.  \n"
+    f"📉 Jumlah penyewaan terendah terjadi pada bulan **{min_month}** dengan **{min_rent} penyewaan**."
+)
+
+st.markdown(f"**Insight:**  \n{insight}")
+
+
 
 st.write("------------------------------------------------")
 
@@ -226,6 +256,26 @@ fig = px.line(
     template='plotly'
 )
 st.plotly_chart(fig)
+
+# Menghitung total penyewaan per tahun
+yearly_counts = monthly_counts.groupby("year")["count"].sum()
+
+# Menentukan tahun dengan penyewaan tertinggi dan terendah
+most_rent_year = yearly_counts.idxmax()
+least_rent_year = yearly_counts.idxmin()
+
+# Mengambil jumlah penyewaan untuk tahun tersebut
+most_rent_count = yearly_counts.max()
+least_rent_count = yearly_counts.min()
+
+# Menampilkan insight dengan jumlah penyewaan
+st.write(
+    f"**Insight:** Tahun dengan jumlah penyewaan tertinggi adalah {most_rent_year} "
+    f"dengan total {most_rent_count:,} penyewaan, "
+    f"sedangkan tahun dengan jumlah penyewaan terendah adalah {least_rent_year} "
+    f"dengan total {least_rent_count:,} penyewaan."
+)
+
 
 st.write("------------------------------------------------")
 
@@ -250,6 +300,20 @@ all_df['season'] = all_df['date'].dt.strftime('%B')  # Assume you have a season 
 # Create a dataframe for season-wise rentals
 season_rent_df = all_df.groupby('season').agg({'registered': 'sum', 'casual': 'sum'}).reset_index()
 
+# Insight otomatis berdasarkan kondisi cuaca
+most_rent_weather = weather_rent_df['count'].idxmax()
+least_rent_weather = weather_rent_df['count'].idxmin()
+most_rent_count = weather_rent_df['count'].max()
+least_rent_count = weather_rent_df['count'].min()
+
+weather_insight = (
+    f"Jumlah penyewaan sepeda tertinggi terjadi pada kondisi cuaca '{most_rent_weather}' "
+    f"dengan total {most_rent_count:,} penyewaan, sedangkan jumlah penyewaan terendah "
+    f"terjadi pada kondisi cuaca '{least_rent_weather}' dengan total {least_rent_count:,} penyewaan."
+)
+
+st.write("**Insight:**", weather_insight)
+
 st.write("------------------------------------------------")
 
 # Visualisasi 2: Jumlah Penyewaan Sepeda Berdasarkan Musim
@@ -271,6 +335,20 @@ fig.update_layout(barmode='group')
 # Display the plot
 st.plotly_chart(fig)
 
+# Insight otomatis berdasarkan musim
+season_rent_df['total'] = season_rent_df['registered'] + season_rent_df['casual']
+most_rent_season = season_rent_df.loc[season_rent_df['total'].idxmax(), 'season']
+least_rent_season = season_rent_df.loc[season_rent_df['total'].idxmin(), 'season']
+most_rent_season_count = season_rent_df['total'].max()
+least_rent_season_count = season_rent_df['total'].min()
+
+season_insight = (
+    f"Musim dengan jumlah penyewaan tertinggi adalah {most_rent_season} dengan total {most_rent_season_count:,} penyewaan, "
+    f"sedangkan musim dengan jumlah penyewaan terendah adalah {least_rent_season} dengan total {least_rent_season_count:,} penyewaan."
+)
+
+st.write("**Insight:**", season_insight)
+
 st.write("------------------------------------------------")
 
 # Visualisasi 3: Jumlah Penyewaan Sepeda per Jam
@@ -287,6 +365,16 @@ fig = px.line(
 )
 st.plotly_chart(fig)
 
+peak_hour = hourly_counts.loc[hourly_counts['count'].idxmax(), 'hour']
+lowest_hour = hourly_counts.loc[hourly_counts['count'].idxmin(), 'hour']
+peak_rentals = hourly_counts['count'].max()
+lowest_rentals = hourly_counts['count'].min()
+
+hourly_insight = (
+    f"Jam dengan jumlah penyewaan tertinggi adalah pukul {peak_hour}:00 dengan rata-rata {peak_rentals:.0f} penyewaan per jam, "
+    f"sedangkan jam dengan jumlah penyewaan terendah adalah pukul {lowest_hour}:00 dengan rata-rata {lowest_rentals:.0f} penyewaan per jam."
+)
+st.write("**Insight:**", hourly_insight)
 
 st.write("------------------------------------------------")
 
@@ -315,6 +403,39 @@ fig_windspeed = px.scatter(
     template='plotly'
 )
 st.plotly_chart(fig_windspeed)
+
+# Insight otomatis untuk suhu
+temp_corr = all_df[['temp', 'count']].corr().iloc[0, 1]
+if temp_corr > 0.5:
+    temp_insight = "Suhu memiliki korelasi positif kuat dengan jumlah penyewaan sepeda. Semakin tinggi suhu, semakin banyak penyewaan."
+elif temp_corr < -0.5:
+    temp_insight = "Suhu memiliki korelasi negatif kuat dengan jumlah penyewaan sepeda. Semakin tinggi suhu, semakin sedikit penyewaan."
+else:
+    temp_insight = "Suhu memiliki korelasi lemah dengan jumlah penyewaan sepeda."
+
+# Insight otomatis untuk kelembaban
+hum_corr = all_df[['hum', 'count']].corr().iloc[0, 1]
+if hum_corr > 0.5:
+    hum_insight = "Kelembaban memiliki korelasi positif kuat dengan jumlah penyewaan sepeda."
+elif hum_corr < -0.5:
+    hum_insight = "Kelembaban memiliki korelasi negatif kuat dengan jumlah penyewaan sepeda."
+else:
+    hum_insight = "Kelembaban memiliki korelasi lemah dengan jumlah penyewaan sepeda."
+
+# Insight otomatis untuk kecepatan angin
+windspeed_corr = all_df[['windspeed', 'count']].corr().iloc[0, 1]
+if windspeed_corr > 0.5:
+    windspeed_insight = "Kecepatan angin memiliki korelasi positif kuat dengan jumlah penyewaan sepeda."
+elif windspeed_corr < -0.5:
+    windspeed_insight = "Kecepatan angin memiliki korelasi negatif kuat dengan jumlah penyewaan sepeda. Angin kencang cenderung mengurangi penyewaan."
+else:
+    windspeed_insight = "Kecepatan angin memiliki korelasi lemah dengan jumlah penyewaan sepeda."
+
+# Menampilkan insight
+st.write("**Insight:**")
+st.write(f"- {temp_insight}")
+st.write(f"- {hum_insight}")
+st.write(f"- {windspeed_insight}")
 
 st.write("------------------------------------------------")
 
@@ -367,6 +488,29 @@ rfm_df['monetary'] = rfm_df['total_rentals']  # Assume monetary value is the sam
 # Drop unnecessary columns
 rfm_df = rfm_df[['customer_id', 'recency', 'frequency', 'monetary']]
 
+# Insight otomatis
+holiday_total = holiday_counts.loc[holiday_counts['holiday'] == 'Holiday', 'count'].values[0]
+non_holiday_total = holiday_counts.loc[holiday_counts['holiday'] == 'Not Holiday', 'count'].values[0]
+
+if holiday_total > non_holiday_total:
+    holiday_insight = (
+        f"Penyewaan sepeda lebih tinggi pada hari libur ({holiday_total} penyewaan) "
+        f"dibandingkan dengan hari biasa ({non_holiday_total} penyewaan)."
+    )
+elif holiday_total < non_holiday_total:
+    holiday_insight = (
+        f"Penyewaan sepeda lebih banyak terjadi pada hari biasa ({non_holiday_total} penyewaan) "
+        f"dibandingkan hari libur ({holiday_total} penyewaan)."
+    )
+else:
+    holiday_insight = (
+        f"Penyewaan sepeda pada hari libur dan hari biasa memiliki jumlah yang sama, yaitu {holiday_total} penyewaan."
+    )
+
+# Menampilkan insight
+st.write("**Insight:**", holiday_insight)
+
+
 st.write("------------------------------------------------")
 
 # Streamlit application for RFM Analysis
@@ -392,6 +536,33 @@ st.write("------------------------------------------------")
 st.subheader('Frequency Distribution')
 fig_freq = px.histogram(rfm_df, x='frequency', nbins=30, title='Frequency Distribution')
 st.plotly_chart(fig_freq)
+
+# Insight otomatis untuk RFM Analysis
+avg_recency = rfm_df['recency'].mean()
+avg_frequency = rfm_df['frequency'].mean()
+avg_monetary = rfm_df['monetary'].mean()
+
+# Menentukan karakteristik pelanggan berdasarkan rata-rata RFM
+if avg_recency < 30:
+    recency_insight = "Sebagian besar pelanggan baru-baru ini melakukan penyewaan sepeda."
+else:
+    recency_insight = "Sebagian besar pelanggan sudah lama tidak melakukan penyewaan sepeda."
+
+if avg_frequency > 5:
+    frequency_insight = "Pelanggan cenderung sering menyewa sepeda, menunjukkan loyalitas yang tinggi."
+else:
+    frequency_insight = "Sebagian besar pelanggan jarang menyewa sepeda."
+
+if avg_monetary > 10:
+    monetary_insight = "Sebagian besar pelanggan memiliki total penyewaan yang tinggi."
+else:
+    monetary_insight = "Sebagian besar pelanggan memiliki total penyewaan yang rendah."
+
+# Menampilkan insight
+st.write("**Insight RFM:**")
+st.write(f"🔹 {recency_insight}")
+st.write(f"🔹 {frequency_insight}")
+st.write(f"🔹 {monetary_insight}")
 
 st.write("------------------------------------------------")
 
@@ -433,6 +604,23 @@ def categorize_rfm(row):
 rfm_df[['R_category', 'F_category', 'M_category']] = rfm_df.apply(categorize_rfm, axis=1)
 rfm_df['segment'] = rfm_df['R_category'] + ' / ' + rfm_df['F_category'] + ' / ' + rfm_df['M_category']
 
+# Menghitung jumlah pelanggan di setiap segmen
+segment_counts = rfm_df['segment'].value_counts()
+
+# Menentukan segmen pelanggan terbesar
+top_segment = segment_counts.idxmax()
+top_segment_count = segment_counts.max()
+
+# Menentukan segmen pelanggan terkecil
+bottom_segment = segment_counts.idxmin()
+bottom_segment_count = segment_counts.min()
+
+# Menampilkan insight otomatis
+st.write("**Insight Kategori RFM:**")
+st.write(f"📊 Segmen pelanggan terbesar adalah **{top_segment}**, dengan total **{top_segment_count} pelanggan**.")
+st.write(f"📉 Segmen pelanggan terkecil adalah **{bottom_segment}**, dengan hanya **{bottom_segment_count} pelanggan**.")
+
+
 st.write("------------------------------------------------")
 
 # Streamlit application for Clustering
@@ -447,6 +635,19 @@ category_counts = rfm_df['segment'].value_counts().reset_index()
 category_counts.columns = ['Segment', 'Count']
 fig_segments = px.bar(category_counts, x='Segment', y='Count', title='Counts of Customer Segments')
 st.plotly_chart(fig_segments)
+
+# Menentukan segmen dengan jumlah pelanggan tertinggi dan terendah
+top_segment = category_counts.iloc[0]['Segment']
+top_segment_count = category_counts.iloc[0]['Count']
+
+bottom_segment = category_counts.iloc[-1]['Segment']
+bottom_segment_count = category_counts.iloc[-1]['Count']
+
+# Menampilkan insight otomatis
+st.write("**🔍 Insight Klasterisasi Pelanggan:**")
+st.write(f"📌 Segmen pelanggan terbanyak adalah **{top_segment}**, dengan **{top_segment_count} pelanggan**.")
+st.write(f"📉 Segmen pelanggan paling sedikit adalah **{bottom_segment}**, dengan **{bottom_segment_count} pelanggan**.")
+
 
 st.write("------------------------------------------------")
 # Bagian untuk analisis Korelasi
@@ -501,4 +702,4 @@ st.write("Fitur berkorelasi rendah memiliki keterhubungan lemah terhadap fitur c
 for feature, score in bottom_correlated_features.items():
     st.write(f"- **{feature}**: {score:.2f}")
 
-st.caption('Copyright (c) I Gede Widnyana 2024')
+st.caption('Copyright (c) I Gede Widnyana 2025')
